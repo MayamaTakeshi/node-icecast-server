@@ -9,16 +9,22 @@ icecast.on('mount', (mount) => {
 
 	//console.dir(mount)
 	var uuid = mount.id.split("=")[1]
-	var writeStream = fs.createWriteStream("./" + uuid + ".wav");
-	//mount.audioStream.on('data', () => console.log('audioStream data'));
+	var writeStream = fs.createWriteStream("./" + uuid + ".mp3");
+
 	mount.audioStream.pipe(writeStream)
 
+        /*
         setTimeout(() => {
 	        console.log(`${new Date()}: timeout`)
                 mount.stream.destroy()
         }, 2000)
+        */
 
-	mount.audioStream.on('close', () => console.log('audioStream close'));
+	mount.audioStream.on('data', () => console.log(`${new Date()}: audioStream data`));
+
+	mount.audioStream.on('close', () => console.log(`${new Date()}: audioStream close`));
+
+	mount.audioStream.on('error', () => console.log(`${new Date()}: audioStream error`));
 });
 
 icecast.listen(9999);

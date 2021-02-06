@@ -41,6 +41,28 @@ export class IcecastServer extends EventEmitter {
     return this;
   }
 
+
+  public handshake(socket: Socket, maybeHeaderData: Buffer) {
+    try {
+      const head = parseHttpHead(maybeHeaderData);
+
+      if (!head) throw new HttpError(400, 'Wtf');
+      this.emit('head', head);
+
+      this.handleRequest(head, socket);
+    }
+    catch (error) {
+      this.emit('error', error);
+
+      const payload = error instanceof HttpError
+        ? generateHttpHead(error.code, error.message)
+        : generateHttpHead(500, 'Unknown error');
+      
+      return socket.end(payload);
+    }
+  }
+
+
   /**
    * Handles an incoming TCP connection
    * 
@@ -48,24 +70,8 @@ export class IcecastServer extends EventEmitter {
    */
   public handleConnection(socket: Socket) {
     socket.once('data', maybeHeaderData => {
-      try {
-        const head = parseHttpHead(maybeHeaderData);
-
-        if (!head) throw new HttpError(400, 'Wtf');
-        this.emit('head', head);
-
-        this.handleRequest(head, socket);
-      }
-      catch (error) {
-        this.emit('error', error);
-
-        const payload = error instanceof HttpError
-          ? generateHttpHead(error.code, error.message)
-          : generateHttpHead(500, 'Unknown error');
-        
-        return socket.end(payload);
-      }
-    });
+      this.handshake(socket, maybeHeaderData)
+    }) 
   }
 
   /**
@@ -75,14 +81,16 @@ export class IcecastServer extends EventEmitter {
    * @param socket 
    */
   public handleRequest(head: any, socket: Socket) {
-    console.log("handleRequest")
+    console.log(`handleRequest ${head.method} ${head.url} ${JSON.stringify(head.headers)}`)
 
     if (head.method != 'PUT' && head.method != 'SOURCE') throw new HttpError(405, 'Invalid method');
 
-    /*
     if (!head.headers.authorization) {
        const status = generateHttpHead(401, 'Unauthorized', false);
        socket.write(status + '\n');
+       socket.once('data', maybeHeaderData => {
+         this.handshake(socket, maybeHeaderData)
+       })
        return
     }
 
@@ -91,7 +99,6 @@ export class IcecastServer extends EventEmitter {
 
     const authenticationIsOk = this.authenticator(authorization.username, authorization.password, head);
     if (!authenticationIsOk) throw new HttpError(403, 'Forbidden');
-    */
 
     const mountId = head.url.substring(1);
     if (!mountId || mountId == '') throw new HttpError(400, 'You cannot mount at root');
