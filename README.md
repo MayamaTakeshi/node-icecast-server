@@ -39,3 +39,9 @@ icecast.listen(78543); // Some random port
 ## License
 
 Even though this package is under MIT license, I'd rather be notified before any commercial use.
+
+
+Note from MayamaTakeshi:
+  this fork includes some changes to allow this to be used with freeswitch mod_shout record_session command.
+
+

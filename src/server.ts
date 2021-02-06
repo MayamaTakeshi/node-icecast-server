@@ -75,22 +75,36 @@ export class IcecastServer extends EventEmitter {
    * @param socket 
    */
   public handleRequest(head: any, socket: Socket) {
-    if (head.method != 'PUT') throw new HttpError(405, 'Invalid method');
-    if (!head.headers.authorization) throw new HttpError(401, 'You need to authenticate');
+    console.log("handleRequest")
+
+    if (head.method != 'PUT' && head.method != 'SOURCE') throw new HttpError(405, 'Invalid method');
+
+    /*
+    if (!head.headers.authorization) {
+       const status = generateHttpHead(401, 'Unauthorized', false);
+       socket.write(status + '\n');
+       return
+    }
 
     const authorization = parseBasicAuthenticationHeader(head.headers.authorization);
     if (!authorization) throw new HttpError(403, 'Authorization failed');
 
     const authenticationIsOk = this.authenticator(authorization.username, authorization.password, head);
     if (!authenticationIsOk) throw new HttpError(403, 'Forbidden');
+    */
 
     const mountId = head.url.substring(1);
     if (!mountId || mountId == '') throw new HttpError(400, 'You cannot mount at root');
     const mount = new IcecastMount(mountId, socket, head.headers);
     this.handleMount(mountId, mount);
 
-    const continueStatus = generateHttpHead(100, 'Continue', false);
-    socket.write(continueStatus + '\n');    
+    if(head.method == 'PUT') {
+      const continueStatus = generateHttpHead(100, 'Continue', false);
+      socket.write(continueStatus + '\n');    
+    } else {
+      const status = generateHttpHead(200, 'OK', false);
+      socket.write(status + '\n');    
+    }
   }
 
   /**
