@@ -24,7 +24,9 @@
     "fluent-ffmpeg": "^2.1.2",
     "rimraf": "^3.0.2",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.5"
+    "typescript": "^4.0.5",
+    "@google-cloud/speech": "^4.2.0",
+    "lame": "git+https://github.com/fusion2004/node-lame.git"
   },
   "dependencies": {
     "http-headers": "^3.0.2",
