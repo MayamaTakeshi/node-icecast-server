@@ -5,13 +5,16 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "private": false,
+  "engines": {
+    "node": "v14.15.4"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/MayamaTakeshi/node-icecast-server.git"
   },
   "scripts": {
     "test": "ts-node ./src/test.ts",
-    "postinstall": "npm install && npm run build",
+    "prepare": "npm install && npm run build",
     "prepublishOnly": "yarn run build",
     "build": "rimraf dist && tsc"
   },
