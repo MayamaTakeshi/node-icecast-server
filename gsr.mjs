@@ -1,3 +1,10 @@
+// This can be used to test freeswitch mod_shout record_session with Google Speech Recognition
+// Before using this do: export GOOGLE_APPLICATION_CREDENTIALS=/PATH/TO/YOUR/CREDENTIALS/FILE
+// Then start the app: node gsr.mjs
+// Then make a call to freeswitch with a dialplan with answer and record_session with url shout://THIS_SERVER:9000/speech_recog?uuid=CHANNELUUID
+// When call is answered, say something and you should see the results in the console 
+
+
 //import { IcecastServer } from '@MayamaTakeshi/icecast-server/dist/server.js';
 import { IcecastServer } from './dist/server.js';
 
@@ -50,13 +57,11 @@ icecast.on('mount', (mount) => {
                 decoder.pipe(recognizeStream)
         })
 
-        decoder.on('data', data => {
-                console.log('MP3 data')
-        })
+        //decoder.on('data', data => console.log('MP3 data'))
 
         mount.audioStream.pipe(decoder)
 
-	mount.audioStream.on('data', () => console.log(`${new Date()}: audioStream data`))
+	//mount.audioStream.on('data', () => console.log(`${new Date()}: audioStream data`))
 
 	mount.audioStream.on('close', () => {
                 console.log(`${new Date()}: audioStream close`)
