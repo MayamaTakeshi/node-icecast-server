@@ -79,7 +79,7 @@ Then make a call (or several simultaneous calls) to reach the above dialplan and
 
 ### Issues
 
-  - for some reason, the app stops recognition after about 15 seconds. This happens because the mount.on('data') callback stopps being called. I don't know the cause yet but it seems to be a problem with src/mount.ts because if I remove the code related to PassThrough in it, the problem doesn't happen.
+  - for some reason, the app stops recognition after about 15 seconds. This happens because the mount.on('data') callback stopps being called. I don't know the cause yet but it seems to be a problem with src/mount.ts because if I comment the code related to PassThrough and metadata parsing in it, the problem doesn't happen.
     Meanwhile if you are interested in an alternative, you can try this one: https://github.com/MayamaTakeshi/shout_to_gsr
 
 
