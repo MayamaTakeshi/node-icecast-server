@@ -70,20 +70,22 @@ class IcecastServer extends events_1.EventEmitter {
         console.log(`handleRequest ${head.method} ${head.url} ${JSON.stringify(head.headers)}`);
         if (head.method != 'PUT' && head.method != 'SOURCE')
             throw new error_1.HttpError(405, 'Invalid method');
-        if (!head.headers.authorization) {
-            const status = helpers_1.generateHttpHead(401, 'Unauthorized', false);
-            socket.write(status + '\n');
-            socket.once('data', maybeHeaderData => {
-                this.handshake(socket, maybeHeaderData);
-            });
-            return;
-        }
-        const authorization = helpers_1.parseBasicAuthenticationHeader(head.headers.authorization);
-        if (!authorization)
-            throw new error_1.HttpError(403, 'Authorization failed');
-        const authenticationIsOk = this.authenticator(authorization.username, authorization.password, head);
-        if (!authenticationIsOk)
-            throw new error_1.HttpError(403, 'Forbidden');
+        /*
+            if (!head.headers.authorization) {
+               const status = generateHttpHead(401, 'Unauthorized', false);
+               socket.write(status + '\n');
+               socket.once('data', maybeHeaderData => {
+                 this.handshake(socket, maybeHeaderData)
+               })
+               return
+            }
+        
+            const authorization = parseBasicAuthenticationHeader(head.headers.authorization);
+            if (!authorization) throw new HttpError(403, 'Authorization failed');
+        
+            const authenticationIsOk = this.authenticator(authorization.username, authorization.password, head);
+            if (!authenticationIsOk) throw new HttpError(403, 'Forbidden');
+        */
         const mountId = head.url.substring(1);
         if (!mountId || mountId == '')
             throw new error_1.HttpError(400, 'You cannot mount at root');

@@ -85,6 +85,7 @@ export class IcecastServer extends EventEmitter {
 
     if (head.method != 'PUT' && head.method != 'SOURCE') throw new HttpError(405, 'Invalid method');
 
+/*
     if (!head.headers.authorization) {
        const status = generateHttpHead(401, 'Unauthorized', false);
        socket.write(status + '\n');
@@ -99,6 +100,7 @@ export class IcecastServer extends EventEmitter {
 
     const authenticationIsOk = this.authenticator(authorization.username, authorization.password, head);
     if (!authenticationIsOk) throw new HttpError(403, 'Forbidden');
+*/
 
     const mountId = head.url.substring(1);
     if (!mountId || mountId == '') throw new HttpError(400, 'You cannot mount at root');
